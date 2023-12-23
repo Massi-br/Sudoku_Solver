@@ -1,0 +1,4 @@
+python -m venv myvenv
+
+Pour activer l'environnement :
+.\projet\Scripts\activate
