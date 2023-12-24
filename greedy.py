@@ -1,22 +1,9 @@
 import networkx as nx
 import matplotlib.pyplot as plt
+import color
 
 
-palette_couleur = [
-    "orange",
-    "black",
-    "green",
-    "red",
-    "blue",
-    "pink",
-    "white",
-    "magenta",
-    "olive",
-    "yellow",
-    "cyan",
-    "mint",
-    "purple",
-]
+palette_couleur = color.valeurs_couleurs
 
 monGraphe = {
     1: [2, 3, 4],
