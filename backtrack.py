@@ -16,7 +16,7 @@ node_colors = ["red", "green"]
 monGraphe = {1: [2, 3], 2: [1, 3], 3: [1, 2]}
 
 
-def isSafe(graphe, vertex, color, sol):
+def isSafeToColor(graphe, vertex, color, sol):
     for v in graphe[vertex]:
         if sol[v] == color:
             return False
@@ -36,7 +36,7 @@ def backtrack(graphe, vertex, colors, solution):
 
     print(f"Coloration de sommet {vertex} avec les couleurs disponibles : {colors} \n")
     for col in colors:
-        if isSafe(graphe, vertex, col, solution):
+        if isSafeToColor(graphe, vertex, col, solution):
             solution[vertex] = col
 
             next_vertex = getNextVertex(graphe, solution)

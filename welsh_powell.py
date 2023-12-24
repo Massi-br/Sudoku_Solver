@@ -32,7 +32,7 @@ def trier_sommets_par_degre(graphe):
 
 
 # Utiliser une palette de trois couleurs : rouge, vert, bleu
-node_colors = ["red", "green", "blue", "orange"]
+pallete_couleurs = ["red", "green", "blue", "orange"]
 
 
 def welsh_powell(graphe):
@@ -52,7 +52,9 @@ def welsh_powell(graphe):
         }
 
         # Trouver la première couleur disponible pour le sommet
-        nouvelle_couleur = next(c for c in node_colors if c not in voisins_couleurs)
+        nouvelle_couleur = next(
+            c for c in pallete_couleurs if c not in voisins_couleurs
+        )
 
         couleur_sommets[sommet] = nouvelle_couleur
 
