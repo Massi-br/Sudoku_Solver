@@ -1,5 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
+from tkinter import messagebox
 
 # Utiliser une palette de trois couleurs : rouge, vert, bleu
 node_colors = ["red", "green"]
@@ -93,4 +94,9 @@ def draw_colored_graph(graph, colors):
 
 
 # Dessiner le graphe coloré
-draw_colored_graph(monGraphe, sol_from_backtrack)
+if sol_from_backtrack is None:
+    messagebox.showerror(
+        "Erreur", "Aucune solution trouvée. Le graphe ne peut pas être coloré."
+    )
+else:
+    draw_colored_graph(monGraphe, sol_from_backtrack)

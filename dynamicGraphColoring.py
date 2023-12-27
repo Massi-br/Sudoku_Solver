@@ -62,16 +62,10 @@ def welsh_powell(graphe):
 
 
 # Exemple d'utilisation
-monGraphe = {
-    1: [2, 3, 4],
-    2: [1, 3],
-    3: [1, 2, 4, 5],
-    4: [1, 3, 5],
-    5: [3, 4],
-}
+monGraphe = {}
 
-couleur_sommets_base = welsh_powell(monGraphe)
-draw_colored_graph(monGraphe, couleur_sommets_base)
+# couleur_sommets_base = welsh_powell(monGraphe)
+# draw_colored_graph(monGraphe, couleur_sommets_base)
 
 
 def action_bouton():
@@ -97,7 +91,7 @@ def action_bouton():
 
     except ValueError:
         # Gérer une erreur si la conversion en entier échoue
-        messagebox.showerror("Erreur", "Veuillez entrer des nombres entiers valides.")
+        messagebox.showerror("Erreur", " Veuillez entrer des nombres entiers valides.")
         return
 
 
@@ -121,7 +115,7 @@ app.geometry(f"{largeur_fenetre}x{hauteur_fenetre}+{x_position}+{y_position}")
 
 
 nbr_vertex_label = tk.Label(app, text="Enter un sommet: ")
-v_vertex_label = tk.Label(app, text="les voisin séparer avec des espaces: ")
+v_vertex_label = tk.Label(app, text="les voisins séparer avec des espaces: ")
 nbr_vertex_entry = tk.Entry(app)
 v_vertex_entry = tk.Entry(app)
 bouton = tk.Button(app, text="Valider", command=action_bouton)
