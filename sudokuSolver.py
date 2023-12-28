@@ -104,8 +104,8 @@ def sol():
     return None
 
 
-sol_from_backtrack = sol()
-print(sol_from_backtrack)
+sol_init = sol()
+print(sol_init)
 
 
 def inverse_dict(d):
@@ -113,6 +113,13 @@ def inverse_dict(d):
 
 
 colors_inv = inverse_dict(colors_dict)
+
+
+def sol_final(sol_from_backtrack):
+    return {k: colors_inv[v] for k, v in sol_from_backtrack.items()}
+
+
+final_result = sol_final(sol_init)
 
 # Affichage du Sudoku initial
 print("Sudoku initial :")
@@ -124,7 +131,7 @@ for row in grille:
 print("Solution du Sudoku :")
 for i in range(9):
     for j in range(9):
-        print(colors_inv[sol_from_backtrack[assign_indices()[(i, j)]]], end=" ")
+        print(colors_inv[sol_init[assign_indices()[(i, j)]]], end=" ")
     print()
 
 # # -----------------------------------------affichage-------------------------------------
@@ -151,69 +158,69 @@ def draw_colored_graph(graph, colors):
 
 
 # Dessiner le graphe coloré
-if sol_from_backtrack is None:
+if sol_init is None:
     messagebox.showerror(
         "Erreur", "Aucune solution trouvée. Le graphe ne peut pas être coloré."
     )
 else:
-    draw_colored_graph(monGraphe, sol_from_backtrack)
+    draw_colored_graph(monGraphe, sol_init)
 
 
-# # Affichage de la grille Sudoku résolue
-# class SudokuGUI:
-#     def __init__(self, master, sudoku_initial, sudoku_solution):
-#         self.master = master
-#         self.master.title("Sudoku Solver")
-#         self.sudoku_initial = sudoku_initial
-#         self.sudoku_solution = sudoku_solution
-#         self.create_grid()
+class SudokuGUI:
+    def __init__(self, master, sudoku_initial, sudoku_solution):
+        self.master = master
+        self.master.title("Sudoku Solver")
+        self.sudoku_initial = sudoku_initial
+        self.sudoku_solution = sudoku_solution
+        self.create_grid()
 
-#     def create_grid(self):
-#         frame_initial = ttk.Frame(self.master)
-#         frame_initial.grid(row=0, column=0)
+    def create_grid(self):
+        frame_initial = ttk.Frame(self.master)
+        frame_initial.grid(row=0, column=0, padx=5)
 
-#         frame_solution = ttk.Frame(self.master)
-#         frame_solution.grid(row=1, column=0)
+        frame_solution = ttk.Frame(self.master)
+        frame_solution.grid(row=0, column=1, padx=5)
 
-#         # Grille initiale
-#         ttk.Label(frame_initial, text="Sudoku Initial", font=("Arial", 16)).grid(
-#             row=0, column=0, columnspan=4
-#         )
-#         canvas_initial = tk.Canvas(frame_initial, width=200, height=200)
-#         canvas_initial.grid(row=1, column=0, columnspan=4)
-#         self.draw_grid(canvas_initial, self.sudoku_initial)
+        # Grille initiale
+        ttk.Label(frame_initial, text="Sudoku Initial", font=("Arial", 16)).grid(
+            row=0, column=0, columnspan=9
+        )
+        canvas_initial = tk.Canvas(frame_initial, width=450, height=450)
+        canvas_initial.grid(row=1, column=0, columnspan=9)
+        self.draw_grid(canvas_initial, self.sudoku_initial)
 
-#         # Grille solution
-#         ttk.Label(frame_solution, text="Sudoku Solution", font=("Arial", 16)).grid(
-#             row=0, column=0, columnspan=4
-#         )
-#         canvas_solution = tk.Canvas(frame_solution, width=200, height=200)
-#         canvas_solution.grid(row=1, column=0, columnspan=4)
-#         self.draw_grid(canvas_solution, self.sudoku_solution)
+        # Grille solution
+        ttk.Label(frame_solution, text="Sudoku Solution", font=("Arial", 16)).grid(
+            row=0, column=0, columnspan=9
+        )
+        canvas_solution = tk.Canvas(frame_solution, width=450, height=450)
+        canvas_solution.grid(row=1, column=0, columnspan=9)
+        self.draw_grid(canvas_solution, self.sudoku_solution)
 
-#     def draw_grid(self, canvas, grid):
-#         cell_size = 50
-#         for i in range(4):
-#             for j in range(4):
-#                 x1, y1 = j * cell_size, i * cell_size
-#                 x2, y2 = x1 + cell_size, y1 + cell_size
-#                 canvas.create_rectangle(x1, y1, x2, y2, outline="black")
+    def draw_grid(self, canvas, grid):
+        cell_size = 50
 
-#                 if isinstance(grid, list):  # Pour la grille initiale (liste de listes)
-#                     value = grid[i][j]
-#                 elif isinstance(grid, dict):  # Pour la grille solution (dictionnaire)
-#                     value = grid[assign_indices()[(i, j)]]
+        for i in range(9):
+            for j in range(9):
+                x1, y1 = j * cell_size, i * cell_size
+                x2, y2 = x1 + cell_size, y1 + cell_size
+                canvas.create_rectangle(x1, y1, x2, y2, outline="black")
 
-#                 if value != 0:
-#                     canvas.create_text(
-#                         (x1 + x2) / 2,
-#                         (y1 + y2) / 2,
-#                         text=str(value),
-#                         font=("Arial", 16),
-#                     )
+                if isinstance(grid, list):  # Pour la grille initiale (liste de listes)
+                    value = grid[i][j]
+                elif isinstance(grid, dict):  # Pour la grille solution (dictionnaire)
+                    value = grid[assign_indices()[(i, j)]]
+
+                if value != 0:
+                    canvas.create_text(
+                        (x1 + x2) / 2,
+                        (y1 + y2) / 2,
+                        text=str(value),
+                        font=("Arial", 16),
+                    )
 
 
-# if __name__ == "__main__":
-#     root = tk.Tk()
-#     app = SudokuGUI(root, grille, sudoku_solution)
-#     root.mainloop()
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = SudokuGUI(root, grille, final_result)
+    root.mainloop()
