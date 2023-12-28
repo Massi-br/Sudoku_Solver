@@ -1,5 +1,21 @@
 import networkx as nx
 import matplotlib.pyplot as plt
+import color
+
+# -----------------------------------DECLARATION----------------------------------#
+pallete_couleurs = color.valeurs_couleurs
+
+print(pallete_couleurs)
+# Exemple d'utilisation
+monGraphe = {
+    1: [2, 3, 4],
+    2: [1, 3],
+    3: [1, 2, 4, 5],
+    4: [1, 3, 5],
+    5: [3, 4],
+}
+
+# -----------------------------------FONCTIONS UTILITARES----------------------------------#
 
 
 def degre(graphe, sommet):
@@ -31,8 +47,7 @@ def trier_sommets_par_degre(graphe):
     return sorted_sommets
 
 
-# Utiliser une palette de trois couleurs : rouge, vert, bleu
-pallete_couleurs = ["red", "green", "blue", "orange"]
+# -----------------------------------FONCTION DE BASE (WELSH_POWELL)-----------------------------#
 
 
 def welsh_powell(graphe):
@@ -61,22 +76,12 @@ def welsh_powell(graphe):
     return couleur_sommets
 
 
-# Exemple d'utilisation
-monGraphe = {
-    1: [2, 3, 4],
-    2: [1, 3],
-    3: [1, 2, 4, 5],
-    4: [1, 3, 5],
-    5: [3, 4],
-}
+# -----------------------------------APPEL A LA FONCTION ----------------------------------------#
 
-# Obtenez la coloration des sommets selon l'algorithme de Welsh-Powell
 couleur_sommets = welsh_powell(monGraphe)
 
-# Création du graphe
+# -----------------------------------CREATION ET AFFICHAGE DU GRAPHE------------------------------------------#
 G = nx.from_dict_of_lists(monGraphe)
-
-# Dessiner le graphe avec les couleurs attribuées
 pos = nx.spring_layout(G)
 node_colors = [couleur_sommets[sommet] for sommet in G.nodes]
 nx.draw(
@@ -88,6 +93,4 @@ nx.draw(
     font_size=10,
     font_family="Arial",
 )
-
-# Affichage
 plt.show()

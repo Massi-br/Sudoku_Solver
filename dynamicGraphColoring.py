@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import messagebox
 import networkx as nx
 import matplotlib.pyplot as plt
-
 import color
 
 
@@ -42,7 +41,6 @@ def welsh_powell(graphe):
     couleur_sommets = (
         {}
     )  # Dictionnaire pour stocker les couleurs attribuées à chaque sommet
-
     while sommets_tries:
         sommet = sommets_tries.pop(
             0
