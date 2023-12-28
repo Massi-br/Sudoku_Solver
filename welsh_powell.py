@@ -5,7 +5,6 @@ import color
 # -----------------------------------DECLARATION----------------------------------#
 pallete_couleurs = color.valeurs_couleurs
 
-print(pallete_couleurs)
 # Exemple d'utilisation
 monGraphe = {
     1: [2, 3, 4],
@@ -81,16 +80,23 @@ def welsh_powell(graphe):
 couleur_sommets = welsh_powell(monGraphe)
 
 # -----------------------------------CREATION ET AFFICHAGE DU GRAPHE------------------------------------------#
-G = nx.from_dict_of_lists(monGraphe)
-pos = nx.spring_layout(G)
-node_colors = [couleur_sommets[sommet] for sommet in G.nodes]
-nx.draw(
-    G,
-    pos,
-    with_labels=True,
-    node_color=node_colors,
-    font_color="white",
-    font_size=10,
-    font_family="Arial",
-)
-plt.show()
+
+
+def draw_colored_graph(graph, colors):
+    G = nx.from_dict_of_lists(graph)
+    # Dessiner le graphe avec les couleurs attribuées
+    pos = nx.spring_layout(G)
+    node_colors = [colors[sommet] for sommet in G.nodes]
+    nx.draw(
+        G,
+        pos,
+        with_labels=True,
+        node_color=node_colors,
+        font_color="white",
+        font_size=10,
+        font_family="Arial",
+    )
+    plt.show()
+
+
+# draw_colored_graph(monGraphe, couleur_sommets)
