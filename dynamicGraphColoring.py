@@ -9,61 +9,188 @@ node_colors = wp.pallete_couleurs
 
 monGraphe = {}
 
+# ---------------------------------------------GRAPHIQUE-----------------------------------------------#
 
-def action_bouton():
-    sommet = nbr_vertex_entry.get()
-    voisins = v_vertex_entry.get()
 
+# -------------------------------------------AJOUT D'UN OU PLUSIEURS SOMMET(S)------------------------------------------#
+def ajoutSommet():
+    vertexFrame = tk.Tk()
+    vertexFrame.title("Ajout Sommet")
+    nbr_vertex_label = tk.Label(
+        vertexFrame, text="Enter un ou plusieurs sommet séparer par un espace: "
+    )
+    nbr_vertex_entry = tk.Entry(vertexFrame)
+    bouton = tk.Button(
+        vertexFrame,
+        text=" Valider ",
+        command=lambda: action_bouton_vertex_add(nbr_vertex_entry),
+    )
+
+    nbr_vertex_label.grid(row=0, column=0, sticky=tk.E, padx=5, pady=10)
+    nbr_vertex_entry.grid(row=0, column=1, padx=10, pady=10)
+    bouton.grid(row=2, column=0, columnspan=2, pady=10)
+    vertexFrame.mainloop()
+
+
+def action_bouton_vertex_add(entry):
+    vertex_entry = entry.get()
     try:
-        sommet = int(sommet)
-        voisins = list(map(int, voisins.split()))
-
-        if sommet not in monGraphe:
-            monGraphe[sommet] = []
-
-        for v in voisins:
-            monGraphe[sommet].append(v)
+        vertex_list = list(map(int, vertex_entry.split()))
+        for v in vertex_list:
             if v not in monGraphe:
                 monGraphe[v] = []
-            monGraphe[v].append(sommet)
+            else:
+                messagebox.showwarning(
+                    "Warnning",
+                    "il existe des sommets identiques , par défaut on les considère comme étant un seul sommet ",
+                )
 
-        # Appliquer l'algorithme de Welsh-Powell
         couleur_sommets = wp.welsh_powell(monGraphe)
         wp.draw_colored_graph(monGraphe, couleur_sommets)
 
     except ValueError:
-        # Gérer une erreur si la conversion en entier échoue
         messagebox.showerror("Erreur", " Veuillez entrer des nombres entiers valides.")
         return
 
 
-def ajoutSommet():
-    print("s")
-
-
+# -------------------------------------------AJOUT D'UN ARC------------------------------------------#
 def ajoutArc():
-    print("s")
+    edgeFrame = tk.Tk()
+    edgeFrame.title("Ajout arc")
+    vertex_1 = tk.Label(edgeFrame, text="Entrer le première extrémité : ")
+    vertex_2 = tk.Label(edgeFrame, text="Entrer la deuxième extrémité : ")
+    vertex_entry_1 = tk.Entry(edgeFrame)
+    vertex_entry_2 = tk.Entry(edgeFrame)
+    bouton = tk.Button(
+        edgeFrame,
+        text=" Valider ",
+        command=lambda: action_bouton_egde_add(vertex_entry_1, vertex_entry_2),
+    )
+    vertex_1.grid(row=0, column=0, sticky=tk.E, padx=10, pady=10)
+    vertex_entry_1.grid(row=0, column=1, padx=10, pady=10)
+    vertex_2.grid(row=1, column=0, sticky=tk.E, padx=10, pady=10)
+    vertex_entry_2.grid(row=1, column=1, padx=10, pady=10)
+
+    bouton.grid(row=2, column=0, columnspan=2, pady=10)
+    edgeFrame.mainloop()
 
 
+def action_bouton_egde_add(entry1, entry2):
+    sommet1 = entry1.get()
+    sommet2 = entry2.get()
+    try:
+        v1 = int(sommet1)
+        v2 = int(sommet2)
+        if (v1 in monGraphe) and (v2 in monGraphe):
+            monGraphe[v1].append(v2)
+            monGraphe[v2].append(v1)
+            couleur_sommets = wp.welsh_powell(monGraphe)
+            wp.draw_colored_graph(monGraphe, couleur_sommets)
+        else:
+            messagebox.showerror(
+                message=f"L'un des sommets n'existe pas dans le graphe"
+            )
+
+    except ValueError:
+        messagebox.showerror("Erreur", " Veuillez entrer des nombres entiers valides.")
+        return
+
+
+# -----------------------------------------SUPPRESSION D'UN SOMMET-------------------------------------#
 def suppressionS():
-    print("s")
+    vertexFrame = tk.Tk()
+    vertexFrame.title("Suppression Sommet")
+    nbr_vertex_label = tk.Label(vertexFrame, text="Enter un sommet: ")
+    nbr_vertex_entry = tk.Entry(vertexFrame)
+    bouton = tk.Button(
+        vertexFrame,
+        text=" Valider ",
+        command=lambda: action_bouton_vertex_supp(nbr_vertex_entry),
+    )
+
+    nbr_vertex_label.grid(row=0, column=0, sticky=tk.E, padx=10, pady=10)
+    nbr_vertex_entry.grid(row=0, column=1, padx=10, pady=10)
+    bouton.grid(row=2, column=0, columnspan=2, pady=10)
+    vertexFrame.mainloop()
 
 
+def action_bouton_vertex_supp(entry):
+    sommet = entry.get()
+    try:
+        sommet = int(sommet)
+        if sommet in monGraphe:
+            del monGraphe[sommet]
+            for v in monGraphe:
+                monGraphe[v] = [voisin for voisin in monGraphe[v] if voisin != sommet]
+            messagebox.showinfo(
+                message=f"le sommet {sommet}a été supprimé avec success"
+            )
+            couleur_sommets = wp.welsh_powell(monGraphe)
+            wp.draw_colored_graph(monGraphe, couleur_sommets)
+        else:
+            messagebox.showerror(
+                message=f"le sommet {sommet} n'existe pas dans le graphe"
+            )
+
+    except ValueError:
+        messagebox.showerror("Erreur", " Veuillez entrer des nombres entiers valides.")
+        return
+
+
+# -------------------------------------------SUPPRESSION D'UN ARC-------------------------------------#
 def suppressionA():
-    print("s")
+    edgeFrame = tk.Tk()
+    edgeFrame.title("Suppression arc")
+    vertex_1 = tk.Label(edgeFrame, text="Entrer le première extrémité : ")
+    vertex_2 = tk.Label(edgeFrame, text="Entrer la deuxième extrémité : ")
+    vertex_entry_1 = tk.Entry(edgeFrame)
+    vertex_entry_2 = tk.Entry(edgeFrame)
+    bouton = tk.Button(
+        edgeFrame,
+        text=" Valider ",
+        command=lambda: action_bouton_egde_supp(vertex_entry_1, vertex_entry_2),
+    )
+    vertex_1.grid(row=0, column=0, sticky=tk.E, padx=10, pady=10)
+    vertex_entry_1.grid(row=0, column=1, padx=10, pady=10)
+    vertex_2.grid(row=1, column=0, sticky=tk.E, padx=10, pady=10)
+    vertex_entry_2.grid(row=1, column=1, padx=10, pady=10)
+
+    bouton.grid(row=2, column=0, columnspan=2, pady=10)
+    edgeFrame.mainloop()
 
 
-# Création de la fenêtre principale
+def action_bouton_egde_supp(entry1, entry2):
+    sommet1 = entry1.get()
+    sommet2 = entry2.get()
+    try:
+        v1 = int(sommet1)
+        v2 = int(sommet2)
+        if (v1 in monGraphe) and (v2 in monGraphe):
+            monGraphe[v1] = [voisin for voisin in monGraphe[v1] if voisin != v2]
+            monGraphe[v2] = [voisin for voisin in monGraphe[v2] if voisin != v1]
+            couleur_sommets = wp.welsh_powell(monGraphe)
+            wp.draw_colored_graph(monGraphe, couleur_sommets)
+        else:
+            messagebox.showerror(
+                "Erreur", " L'un des deux sommet n'existe pas dans le graphe"
+            )
+
+    except ValueError:
+        messagebox.showerror("Erreur", " Veuillez entrer des nombres entiers valides.")
+        return
+
+
+# -------------------------------------------FENETRE PRINCIPALE-------------------------------------#
 app = tk.Tk()
 app.title("Graph Coloring Algorithm")
-app.maxsize(400, 250)
-app.minsize(300, 200)
+app.maxsize(400, 350)
+app.minsize(300, 300)
 largeur_ecran = app.winfo_screenwidth()
 hauteur_ecran = app.winfo_screenheight()
 
 
 largeur_fenetre = 300
-hauteur_fenetre = 200
+hauteur_fenetre = 300
 
 x_position = (largeur_ecran - largeur_fenetre) // 2
 y_position = (hauteur_ecran - hauteur_fenetre) // 2
@@ -78,24 +205,46 @@ suppS = tk.Button(app, text="Supprimer un Sommet", width="20", command=suppressi
 suppA = tk.Button(app, text="Supprimer un Arc", width="20", command=suppressionA)
 
 
+def quitter_application():
+    app.destroy()
+
+
+quitter = tk.Button(
+    app,
+    text="Quit",
+    width="20",
+    background="red",
+    foreground="white",
+    command=quitter_application,
+)
+
+
+def reset_action():
+    global monGraphe
+
+    monGraphe = {}
+    messagebox.showinfo("Info", " le graphe a été réinitialiser")
+
+
+reset = tk.Button(
+    app,
+    text="Reset",
+    width="20",
+    background="blue",
+    foreground="white",
+    command=reset_action,
+)
+
+
 ajoutS.grid(row=0, column=1, padx=10, pady=10)
 ajoutA.grid(row=1, column=1, padx=10, pady=10)
 suppS.grid(row=2, column=1, padx=10, pady=10)
 suppA.grid(row=3, column=1, padx=10, pady=10)
+reset.grid(row=4, column=1, padx=10, pady=10)
+quitter.grid(row=5, column=1, padx=10, pady=10)
+
 
 app.columnconfigure(1, weight=1)
 
-# nbr_vertex_label = tk.Label(app, text="Enter un sommet: ")
-# v_vertex_label = tk.Label(app, text="les voisins séparer avec des espaces: ")
-# nbr_vertex_entry = tk.Entry(app)
-# v_vertex_entry = tk.Entry(app)
-# bouton = tk.Button(app, text=" Valider ", command=action_bouton)
-
-
-# nbr_vertex_label.grid(row=0, column=0, sticky=tk.E, padx=10, pady=10)
-# nbr_vertex_entry.grid(row=0, column=1, padx=10, pady=10)
-# v_vertex_label.grid(row=1, column=0, sticky=tk.N, padx=10, pady=10)
-# v_vertex_entry.grid(row=1, column=1, padx=10, pady=10)
-# bouton.grid(row=2, column=0, columnspan=2, pady=10)
 
 app.mainloop()
