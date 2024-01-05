@@ -1,25 +1,12 @@
-import networkx as nx
-import matplotlib.pyplot as plt
 import tkinter as tk
-from tkinter import messagebox
+from display import draw_colored_graph
+from color import pallete_couleurs
 
-
-# -----------------------------------DECLARATION----------------------------------#
-pallete_couleurs = [
-    "red",
-    "blue",
-    "green",
-    "black",
-    "grey",
-    "orange",
-    "purple",
-    "yellow",
-    "pink",
-]
+# -----------------------------------DECLARATION---------------------------------------------#
 monGraphe = {}
 
 
-# -----------------------------------FONCTIONS UTILITARES----------------------------------#
+# -----------------------------------FONCTIONS UTILITARES------------------------------------#
 def degre(graphe, sommet):
     """
     Calcule le degré d'un sommet dans un graphe représenté par un dictionnaire.
@@ -49,7 +36,7 @@ def trier_sommets_par_degre(graphe):
     return sorted_sommets
 
 
-# -----------------------------------FONCTION DE BASE (WELSH_POWELL)-----------------------------#
+# -----------------------------------FONCTION DE BASE (WELSH_POWELL)-------------------------#
 def welsh_powell(graphe):
     sommets_tries = trier_sommets_par_degre(graphe)
     couleur_sommets = (
@@ -76,28 +63,10 @@ def welsh_powell(graphe):
     return couleur_sommets
 
 
-# -----------------------------------CREATION ET AFFICHAGE DU GRAPHE------------------------------#
-def draw_colored_graph(graph, colors):
-    G = nx.from_dict_of_lists(graph)
-    # Dessiner le graphe avec les couleurs attribuées
-    pos = nx.spring_layout(G)
-    node_colors = [colors[sommet] for sommet in G.nodes]
-    nx.draw(
-        G,
-        pos,
-        with_labels=True,
-        node_color=node_colors,
-        font_color="white",
-        font_size=10,
-        font_family="Arial",
-    )
-    plt.show()
+# -------------------------------------------GUI---------------------------------------------#
+def graphe_from_welsh():
+    global monGraphe
 
-
-# -----------------------------------GUI------------------------------------------#
-
-
-def create_graph_interface():
     def add_vertex_and_close():
         add_vertex()
         close_vertex_window()
@@ -108,7 +77,7 @@ def create_graph_interface():
         neighbors = entry_neighbors.get().split()
 
         if vertex in neighbors:
-            messagebox.showerror(
+            tk.messagebox.showerror(
                 "Erreur",
                 " Un sommet ne peut pas être son propre voisin. Veuillez ressaisir.",
             )
@@ -165,6 +134,7 @@ def create_graph_interface():
         vertex_window.destroy()
 
     def action_button():
+        global monGraphe
         s = entry_1.get()
         try:
             vertices = int(s)
@@ -175,12 +145,17 @@ def create_graph_interface():
                 )  # Attendre que la fenêtre pop-up soit fermée
             sol = welsh_powell(monGraphe)
             draw_colored_graph(monGraphe, sol)
+            monGraphe = {}
             app.destroy()
         except ValueError:
-            messagebox.showerror(
+            tk.messagebox.showerror(
                 "Erreur", " Veuillez entrer des nombres entiers valides."
             )
             return
+
+    def reset_graph():
+        global monGraphe
+        monGraphe = {}
 
     app = tk.Tk()
     app.title("Welsh_Powell Algorithm")
@@ -198,8 +173,5 @@ def create_graph_interface():
     entry_1.grid(row=0, column=2, padx=10, pady=10, columnspan=2)
 
     validate_button.grid(row=2, column=1, padx=10, pady=10, columnspan=2)
-
+    app.protocol("WM_DELETE_WINDOW", reset_graph)
     app.mainloop()
-
-
-create_graph_interface()

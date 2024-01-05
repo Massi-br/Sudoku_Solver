@@ -1,11 +1,9 @@
 import backtrack as bkt
-import networkx as nx
-import matplotlib.pyplot as plt
-from tkinter import messagebox, ttk
+from display import draw_colored_graph
 import tkinter as tk
 
 
-# -----------------------------------DECLARATION----------------------------------#
+# -----------------------------------------------------DECLARATION--------------------------------------------#
 # Exemple d'utilisation
 grille = [
     [5, 3, 0, 0, 7, 0, 0, 0, 0],
@@ -32,7 +30,7 @@ colors_dict = {
 }
 
 
-# -----------------------------------FONCTIONS UTILITARES----------------------------------#
+# ---------------------------------------------FONCTIONS UTILITARES-------------------------------------------#
 def assign_indices():
     indices = {}
     count = 0
@@ -47,7 +45,7 @@ def inverse_dict(d):
     return {v: k for k, v in d.items()}
 
 
-# -----------------------------------FONCTIONS DE BASE----------------------------------#
+# --------------------------------------------FONCTIONS DE BASE----------------------------------------------#
 def graph_from_grid():
     graph = {}
     # Ajouter tous les sommets au graphe et bien les indicés
@@ -103,7 +101,7 @@ def sol_final(sol_from_backtrack):
     return {k: colors_inv[v] for k, v in sol_from_backtrack.items()}
 
 
-# -----------------------------------APPELS AU FONCTIONS----------------------------------#
+# --------------------------------------------APPELS AU FONCTIONS---------------------------------------------#
 
 monGraphe = graph_from_grid()
 
@@ -113,43 +111,23 @@ colors_inv = inverse_dict(colors_dict)
 
 final_result = sol_final(sol_init)
 
-# -----------------------AFFICHAGE DANS LE TERMINAL --------------------#
-# -----------------------AFFICHAGE DU SUDOKU INITIAL --------------------#
+# ---------------------------------------AFFICHAGE DANS LE TERMINAL ----------------------------------------#
+# ----------------------------------------AFFICHAGE DU SUDOKU INITIAL --------------------#
 print("Sudoku initial :")
 for row in grille:
     print(" ".join(map(str, row)))
 
-# ------------------------AFFICHAGE DE LA SOLUTION-----------------------#
+# ---------------------------------------AFFICHAGE DE LA SOLUTION-------------------------#
 print("Solution du Sudoku :")
 for i in range(9):
     for j in range(9):
         print(colors_inv[sol_init[assign_indices()[(i, j)]]], end=" ")
     print()
 
-
-# ------------------------------------DESSINER LE GRAPHE COLORË--------------------------------------#
-def draw_colored_graph(graph, colors):
-    G = nx.from_dict_of_lists(graph)
-    # Dessiner le graphe avec les couleurs attribuées
-    pos = nx.kamada_kawai_layout(G)
-    node_colors = [
-        colors.get(sommet, 0) for sommet in G.nodes
-    ]  # Utilisez les couleurs attribuées
-    nx.draw(
-        G,
-        pos,
-        with_labels=True,
-        node_color=node_colors,
-        font_color="white",
-        font_size=8,
-        font_family="Arial",
-    )
-    # Affichage
-    plt.show()
-
+# ------------------------------------DESSINER LE GRAPHE COLORË--------------------------------------------#
 
 if sol_init is None:
-    messagebox.showerror(
+    tk.messagebox.showerror(
         "Erreur", "Aucune solution trouvée. Le graphe ne peut pas être coloré."
     )
 else:
@@ -168,17 +146,17 @@ class SudokuGUI:
         self.create_grid()
 
     def create_grid(self):
-        frame_initial = ttk.Frame(self.master)
+        frame_initial = tk.ttk.Frame(self.master)
         frame_initial.grid(row=0, column=0, padx=5)
 
-        frame_color = ttk.Frame(self.master)
+        frame_color = tk.ttk.Frame(self.master)
         frame_color.grid(row=0, column=1, padx=5)
 
-        frame_solution = ttk.Frame(self.master)
+        frame_solution = tk.ttk.Frame(self.master)
         frame_solution.grid(row=0, column=2, padx=5)
 
         # Grille initiale
-        ttk.Label(frame_initial, text="Sudoku Initial", font=("Arial", 16)).grid(
+        tk.ttk.Label(frame_initial, text="Sudoku Initial", font=("Arial", 16)).grid(
             row=0, column=0, columnspan=9
         )
         canvas_initial = tk.Canvas(frame_initial, width=400, height=450)
@@ -186,7 +164,7 @@ class SudokuGUI:
         self.draw_grid(canvas_initial, self.sudoku_initial)
 
         # Grille de couleurs
-        ttk.Label(frame_color, text="Grille de Couleurs", font=("Arial", 16)).grid(
+        tk.ttk.Label(frame_color, text="Grille de Couleurs", font=("Arial", 16)).grid(
             row=0, column=0, columnspan=9
         )
         canvas_color = tk.Canvas(frame_color, width=400, height=450)
@@ -194,7 +172,7 @@ class SudokuGUI:
         self.draw_color_grid(canvas_color, self.color_grid)
 
         # Grille solution
-        ttk.Label(frame_solution, text="Sudoku Solution", font=("Arial", 16)).grid(
+        tk.ttk.Label(frame_solution, text="Sudoku Solution", font=("Arial", 16)).grid(
             row=0, column=0, columnspan=9
         )
         canvas_solution = tk.Canvas(frame_solution, width=400, height=450)

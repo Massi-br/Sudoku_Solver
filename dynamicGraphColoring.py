@@ -1,18 +1,13 @@
 import tkinter as tk
 from tkinter import messagebox
-import welsh_powell as wp
+from welsh_powell import welsh_powell
+from display import draw_colored_graph
 
-
-# -----------------------------------DECLARATION----------------------------------#
-
-node_colors = wp.pallete_couleurs
-
+# -----------------------------------DECLARATION-------------------------------------------------------------#
 monGraphe = {}
 
-# ---------------------------------------------GRAPHIQUE-----------------------------------------------#
 
-
-# -------------------------------------------AJOUT D'UN OU PLUSIEURS SOMMET(S)------------------------------------------#
+# -------------------------------------------AJOUT D'UN OU PLUSIEURS SOMMET(S)-------------------------------#
 def ajoutSommet():
     vertexFrame = tk.Tk()
     vertexFrame.title("Ajout Sommet")
@@ -44,16 +39,16 @@ def action_bouton_vertex_add(entry):
                     "Warnning",
                     "il existe des sommets identiques , par défaut on les considère comme étant un seul sommet ",
                 )
-
-        couleur_sommets = wp.welsh_powell(monGraphe)
-        wp.draw_colored_graph(monGraphe, couleur_sommets)
+        update_buttons_state()
+        couleur_sommets = welsh_powell(monGraphe)
+        draw_colored_graph(monGraphe, couleur_sommets)
 
     except ValueError:
         messagebox.showerror("Erreur", " Veuillez entrer des nombres entiers valides.")
         return
 
 
-# -------------------------------------------AJOUT D'UN ARC------------------------------------------#
+# -------------------------------------------AJOUT D'UN ARC----------------------------------------------------#
 def ajoutArc():
     edgeFrame = tk.Tk()
     edgeFrame.title("Ajout arc")
@@ -84,11 +79,12 @@ def action_bouton_egde_add(entry1, entry2):
         if (v1 in monGraphe) and (v2 in monGraphe):
             monGraphe[v1].append(v2)
             monGraphe[v2].append(v1)
-            couleur_sommets = wp.welsh_powell(monGraphe)
-            wp.draw_colored_graph(monGraphe, couleur_sommets)
+            update_buttons_state()
+            couleur_sommets = welsh_powell(monGraphe)
+            draw_colored_graph(monGraphe, couleur_sommets)
         else:
             messagebox.showerror(
-                message=f"L'un des sommets n'existe pas dans le graphe"
+                message=f"L'un ou les deux sommets n'existe pas dans le graphe"
             )
 
     except ValueError:
@@ -96,7 +92,7 @@ def action_bouton_egde_add(entry1, entry2):
         return
 
 
-# -----------------------------------------SUPPRESSION D'UN SOMMET-------------------------------------#
+# -----------------------------------------SUPPRESSION D'UN SOMMET--------------------------------------------#
 def suppressionS():
     vertexFrame = tk.Tk()
     vertexFrame.title("Suppression Sommet")
@@ -123,13 +119,14 @@ def action_bouton_vertex_supp(entry):
             for v in monGraphe:
                 monGraphe[v] = [voisin for voisin in monGraphe[v] if voisin != sommet]
             messagebox.showinfo(
-                message=f"le sommet {sommet}a été supprimé avec success"
+                message=f"le sommet '{sommet}' a été supprimé avec success"
             )
-            couleur_sommets = wp.welsh_powell(monGraphe)
-            wp.draw_colored_graph(monGraphe, couleur_sommets)
+            update_buttons_state()
+            couleur_sommets = welsh_powell(monGraphe)
+            draw_colored_graph(monGraphe, couleur_sommets)
         else:
             messagebox.showerror(
-                message=f"le sommet {sommet} n'existe pas dans le graphe"
+                message=f"le sommet '{sommet}' n'existe pas dans le graphe"
             )
 
     except ValueError:
@@ -137,7 +134,7 @@ def action_bouton_vertex_supp(entry):
         return
 
 
-# -------------------------------------------SUPPRESSION D'UN ARC-------------------------------------#
+# -------------------------------------------SUPPRESSION D'UN ARC-----------------------------------------------#
 def suppressionA():
     edgeFrame = tk.Tk()
     edgeFrame.title("Suppression arc")
@@ -166,13 +163,19 @@ def action_bouton_egde_supp(entry1, entry2):
         v1 = int(sommet1)
         v2 = int(sommet2)
         if (v1 in monGraphe) and (v2 in monGraphe):
-            monGraphe[v1] = [voisin for voisin in monGraphe[v1] if voisin != v2]
-            monGraphe[v2] = [voisin for voisin in monGraphe[v2] if voisin != v1]
-            couleur_sommets = wp.welsh_powell(monGraphe)
-            wp.draw_colored_graph(monGraphe, couleur_sommets)
+            if v2 in monGraphe[v1] and v1 in monGraphe[v2]:
+                monGraphe[v1].remove(v2)
+                monGraphe[v2].remove(v1)
+                update_buttons_state()
+                couleur_sommets = welsh_powell(monGraphe)
+                draw_colored_graph(monGraphe, couleur_sommets)
+            else:
+                messagebox.showerror(
+                    "Erreur", " L'arc entre ces deux sommets n'existe pas."
+                )
         else:
             messagebox.showerror(
-                "Erreur", " L'un des deux sommet n'existe pas dans le graphe"
+                "Erreur", " L'un ou les deux sommets n'existe pas dans le graphe."
             )
 
     except ValueError:
@@ -180,7 +183,7 @@ def action_bouton_egde_supp(entry1, entry2):
         return
 
 
-# -------------------------------------------FENETRE PRINCIPALE-------------------------------------#
+# -------------------------------------------FENETRE PRINCIPALE---------------------------------------------------#
 app = tk.Tk()
 app.title("Graph Coloring Algorithm")
 app.maxsize(400, 350)
@@ -200,8 +203,8 @@ app.geometry(f"{largeur_fenetre}x{hauteur_fenetre}+{x_position}+{y_position}")
 
 
 ajoutS = tk.Button(app, text="Ajouter un Sommet", width="20", command=ajoutSommet)
-ajoutA = tk.Button(app, text="Ajouter un Arc", width="20", command=ajoutArc)
 suppS = tk.Button(app, text="Supprimer un Sommet", width="20", command=suppressionS)
+ajoutA = tk.Button(app, text="Ajouter un Arc", width="20", command=ajoutArc)
 suppA = tk.Button(app, text="Supprimer un Arc", width="20", command=suppressionA)
 
 
@@ -221,8 +224,10 @@ quitter = tk.Button(
 
 def reset_action():
     global monGraphe
-
     monGraphe = {}
+    suppS["state"] = tk.DISABLED
+    suppA["state"] = tk.DISABLED
+    ajoutA["state"] = tk.DISABLED
     messagebox.showinfo("Info", " le graphe a été réinitialiser")
 
 
@@ -236,9 +241,26 @@ reset = tk.Button(
 )
 
 
+def update_buttons_state():
+    if len(monGraphe) >= 1:
+        suppS["state"] = tk.NORMAL
+    else:
+        suppS["state"] = tk.DISABLED
+
+    if len(monGraphe) >= 2:
+        ajoutA["state"] = tk.NORMAL
+    else:
+        ajoutA["state"] = tk.DISABLED
+    nb_arcs = sum(len(neighbors) for neighbors in monGraphe.values()) // 2
+    if nb_arcs >= 1:
+        suppA["state"] = tk.NORMAL
+    else:
+        suppA["state"] = tk.DISABLED
+
+
 ajoutS.grid(row=0, column=1, padx=10, pady=10)
-ajoutA.grid(row=1, column=1, padx=10, pady=10)
-suppS.grid(row=2, column=1, padx=10, pady=10)
+suppS.grid(row=1, column=1, padx=10, pady=10)
+ajoutA.grid(row=2, column=1, padx=10, pady=10)
 suppA.grid(row=3, column=1, padx=10, pady=10)
 reset.grid(row=4, column=1, padx=10, pady=10)
 quitter.grid(row=5, column=1, padx=10, pady=10)
@@ -246,5 +268,5 @@ quitter.grid(row=5, column=1, padx=10, pady=10)
 
 app.columnconfigure(1, weight=1)
 
-
+update_buttons_state()
 app.mainloop()

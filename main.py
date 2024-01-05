@@ -1,49 +1,70 @@
 import tkinter as tk
-from welsh_powell import create_graph_interface
+from welsh_powell import graphe_from_welsh
+from backtrack import graph_from_backtrack
+from greedy import graph_from_greedy
 
 
-def on_button_click(algorithm_function):
+def run_algorithm(algorithm_function):
     algorithm_function()
 
 
-app = tk.Tk()
-app.title("Graph Coloring Algorithm")
-app.maxsize(400, 150)
-app.minsize(200, 150)
-largeur_ecran = app.winfo_screenwidth()
-hauteur_ecran = app.winfo_screenheight()
+def main_window():
+    app = tk.Tk()
+    app.title("Graph Coloring Algorithm")
+    app.maxsize(400, 250)
+    app.minsize(300, 200)
 
-largeur_fenetre = 300
-hauteur_fenetre = 300
+    # Center the window on the screen
+    screen_width = app.winfo_screenwidth()
+    screen_height = app.winfo_screenheight()
 
-x_position = (largeur_ecran - largeur_fenetre) // 2
-y_position = (hauteur_ecran - hauteur_fenetre) // 2
+    window_width = 300
+    window_height = 300
 
-app.geometry(f"{largeur_fenetre}x{hauteur_fenetre}+{x_position}+{y_position}")
+    x_position = (screen_width - window_width) // 2
+    y_position = (screen_height - window_height) // 2
 
-ajoutS = tk.Button(
-    app,
-    text="Backtrack Algorithm",
-    width="20",
-    command=lambda: on_button_click(backtrack_algorithm_interface),
-)
-ajoutA = tk.Button(
-    app,
-    text="Welsh-Powell Algorithm",
-    width="20",
-    command=lambda: on_button_click(create_graph_interface),
-)
-suppS = tk.Button(
-    app,
-    text="Greedy Algorithm",
-    width="20",
-    command=lambda: on_button_click(greedy_algorithm_interface),
-)
+    app.geometry(f"{window_width}x{window_height}+{x_position}+{y_position}")
 
-ajoutS.grid(row=0, column=1, padx=10, pady=10)
-ajoutA.grid(row=1, column=1, padx=10, pady=10)
-suppS.grid(row=2, column=1, padx=10, pady=10)
+    bk_button = tk.Button(
+        app,
+        text="Backtrack Algorithm",
+        width="20",
+        command=lambda: run_algorithm(graph_from_backtrack),
+    )
+    wp_button = tk.Button(
+        app,
+        text="Welsh-Powell Algorithm",
+        width="20",
+        command=lambda: run_algorithm(graphe_from_welsh),
+    )
+    greedy_button = tk.Button(
+        app,
+        text="Greedy Algorithm",
+        width="20",
+        command=lambda: run_algorithm(graph_from_greedy),
+    )
 
-app.columnconfigure(1, weight=1)
+    def quitter_application():
+        app.destroy()
 
-app.mainloop()
+    quitter = tk.Button(
+        app,
+        text="Quit",
+        width="20",
+        background="red",
+        foreground="white",
+        command=quitter_application,
+    )
+
+    bk_button.grid(row=0, column=1, padx=10, pady=10)
+    wp_button.grid(row=1, column=1, padx=10, pady=10)
+    greedy_button.grid(row=2, column=1, padx=10, pady=10)
+    quitter.grid(row=3, column=1, padx=10, pady=10)
+
+    app.columnconfigure(1, weight=1)
+    app.mainloop()
+
+
+if __name__ == "__main__":
+    main_window()
