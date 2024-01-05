@@ -1,22 +1,25 @@
 import networkx as nx
 import matplotlib.pyplot as plt
-import color
+import tkinter as tk
+from tkinter import messagebox
+
 
 # -----------------------------------DECLARATION----------------------------------#
-pallete_couleurs = color.valeurs_couleurs
+pallete_couleurs = [
+    "red",
+    "blue",
+    "green",
+    "black",
+    "grey",
+    "orange",
+    "purple",
+    "yellow",
+    "pink",
+]
+monGraphe = {}
 
-# Exemple d'utilisation
-monGraphe = {
-    1: [2, 3, 4],
-    2: [1, 3],
-    3: [1, 2, 4, 5],
-    4: [1, 3, 5],
-    5: [3, 4],
-}
 
 # -----------------------------------FONCTIONS UTILITARES----------------------------------#
-
-
 def degre(graphe, sommet):
     """
     Calcule le degré d'un sommet dans un graphe représenté par un dictionnaire.
@@ -47,8 +50,6 @@ def trier_sommets_par_degre(graphe):
 
 
 # -----------------------------------FONCTION DE BASE (WELSH_POWELL)-----------------------------#
-
-
 def welsh_powell(graphe):
     sommets_tries = trier_sommets_par_degre(graphe)
     couleur_sommets = (
@@ -75,13 +76,7 @@ def welsh_powell(graphe):
     return couleur_sommets
 
 
-# -----------------------------------APPEL A LA FONCTION ----------------------------------------#
-
-couleur_sommets = welsh_powell(monGraphe)
-
-# -----------------------------------CREATION ET AFFICHAGE DU GRAPHE------------------------------------------#
-
-
+# -----------------------------------CREATION ET AFFICHAGE DU GRAPHE------------------------------#
 def draw_colored_graph(graph, colors):
     G = nx.from_dict_of_lists(graph)
     # Dessiner le graphe avec les couleurs attribuées
@@ -99,4 +94,112 @@ def draw_colored_graph(graph, colors):
     plt.show()
 
 
-# draw_colored_graph(monGraphe, couleur_sommets)
+# -----------------------------------GUI------------------------------------------#
+
+
+def create_graph_interface():
+    def add_vertex_and_close():
+        add_vertex()
+        close_vertex_window()
+
+    def add_vertex():
+        global entry_vertex, entry_neighbors
+        vertex = entry_vertex.get()
+        neighbors = entry_neighbors.get().split()
+
+        if vertex in neighbors:
+            messagebox.showerror(
+                "Erreur",
+                " Un sommet ne peut pas être son propre voisin. Veuillez ressaisir.",
+            )
+            return
+
+        # Mise à jour du graphe
+        if vertex not in monGraphe:
+            monGraphe[vertex] = []
+
+        for neighbor in neighbors:
+            if neighbor != vertex and neighbor not in monGraphe[vertex]:
+                monGraphe[vertex].append(neighbor)
+
+            if neighbor not in monGraphe:
+                monGraphe[neighbor] = []
+
+            if vertex != neighbor and vertex not in monGraphe[neighbor]:
+                monGraphe[neighbor].append(vertex)
+
+        # Affichage du graphe actuel
+        print("Graphe actuel:", monGraphe)
+
+        # Réinitialiser les champs d'entrée
+        entry_vertex.delete(0, tk.END)
+        entry_neighbors.delete(0, tk.END)
+
+    def open_vertex_window():
+        global entry_vertex, entry_neighbors, vertex_window
+
+        # Créer une fenêtre pop-up
+        vertex_window = tk.Toplevel(app)
+        vertex_window.title("Ajouter un sommet")
+
+        label_vertex = tk.Label(vertex_window, text="Sommet:")
+        entry_vertex = tk.Entry(vertex_window)
+
+        label_neighbors = tk.Label(
+            vertex_window, text="Voisins (séparés par des espaces):"
+        )
+        entry_neighbors = tk.Entry(vertex_window)
+
+        validate_vertex_button = tk.Button(
+            vertex_window, text="Valider", command=add_vertex_and_close
+        )
+
+        label_vertex.grid(row=0, column=0, padx=10, pady=5)
+        entry_vertex.grid(row=0, column=1, padx=10, pady=5)
+        label_neighbors.grid(row=1, column=0, padx=10, pady=5)
+        entry_neighbors.grid(row=1, column=1, padx=10, pady=5)
+        validate_vertex_button.grid(row=2, column=0, columnspan=2, pady=10)
+
+    def close_vertex_window():
+        global vertex_window
+        vertex_window.destroy()
+
+    def action_button():
+        s = entry_1.get()
+        try:
+            vertices = int(s)
+            for _ in range(vertices):
+                open_vertex_window()
+                app.wait_window(
+                    vertex_window
+                )  # Attendre que la fenêtre pop-up soit fermée
+            sol = welsh_powell(monGraphe)
+            draw_colored_graph(monGraphe, sol)
+            app.destroy()
+        except ValueError:
+            messagebox.showerror(
+                "Erreur", " Veuillez entrer des nombres entiers valides."
+            )
+            return
+
+    app = tk.Tk()
+    app.title("Welsh_Powell Algorithm")
+    app.geometry("250x150")
+
+    app.maxsize(400, 200)
+    app.minsize(400, 150)
+
+    validate_button = tk.Button(app, text="Valider", width="20", command=action_button)
+
+    label1 = tk.Label(app, text="Entrer le nombre de sommet: ")
+    entry_1 = tk.Entry(app)
+
+    label1.grid(row=0, column=0, sticky=tk.E, padx=10, pady=10, columnspan=2)
+    entry_1.grid(row=0, column=2, padx=10, pady=10, columnspan=2)
+
+    validate_button.grid(row=2, column=1, padx=10, pady=10, columnspan=2)
+
+    app.mainloop()
+
+
+create_graph_interface()

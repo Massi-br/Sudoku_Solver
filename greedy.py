@@ -1,6 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
-import color
+import color as color
 
 
 palette_couleur = color.valeurs_couleurs
@@ -29,7 +29,6 @@ def gloutton(graphe):
         indice_couleur = 0
         while indice_couleur in index_couleurs:
             indice_couleur += 1
-
         colored[vertex] = palette_couleur[indice_couleur]
 
     return colored
@@ -38,10 +37,8 @@ def gloutton(graphe):
 resultats_gloutton = gloutton(monGraphe)
 
 G = nx.from_dict_of_lists(monGraphe)
-
 # Récupération des couleurs attribuées par la fonction gloutton
 couleurs_noeuds = [resultats_gloutton[n] for n in G.nodes]
-
 pos = nx.spring_layout(G)
 nx.draw(
     G,
