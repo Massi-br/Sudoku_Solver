@@ -1,4 +1,5 @@
 from display import draw_colored_graph
+from tkinter import messagebox
 from color import pallete_couleurs
 import tkinter as tk
 
@@ -44,7 +45,7 @@ def graph_from_greedy():
         neighbors = entry_neighbors.get().split()
 
         if vertex in neighbors:
-            tk.messagebox.showerror(
+            messagebox.showerror(
                 "Erreur",
                 " Un sommet ne peut pas être son propre voisin. Veuillez ressaisir.",
             )
@@ -116,7 +117,7 @@ def graph_from_greedy():
             monGraphe = {}
             app.destroy()
         except ValueError:
-            tk.messagebox.showerror(
+            messagebox.showerror(
                 "Erreur", " Veuillez entrer des nombres entiers valides."
             )
             return

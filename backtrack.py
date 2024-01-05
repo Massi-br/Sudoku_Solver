@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 from display import draw_colored_graph
 from color import pallete_couleurs
 
@@ -97,7 +98,7 @@ def graph_from_backtrack():
         neighbors = entry_neighbors.get().split()
 
         if vertex in neighbors:
-            tk.messagebox.showerror(
+            messagebox.showerror(
                 "Erreur",
                 " Un sommet ne peut pas être son propre voisin. Veuillez ressaisir.",
             )
@@ -140,13 +141,13 @@ def graph_from_backtrack():
             if first_vertex is not None:
                 sol = backtrack(monGraphe, first_vertex, pallete_couleurs, v_solution)
             else:
-                tk.messagebox.showerror(
+                messagebox.showerror(
                     "Erreur", "Le graphe est vide. Ajoutez des sommets."
                 )
             if sol:
                 draw_colored_graph(monGraphe, v_solution)
             else:
-                tk.messagebox.showerror(
+                messagebox.showerror(
                     "Erreur",
                     "Aucune solution trouvée. Le graphe ne peut pas être coloré.",
                 )
@@ -155,7 +156,7 @@ def graph_from_backtrack():
                 graph_drawing_window = None
             app.destroy()
         except ValueError:
-            tk.messagebox.showerror(
+            messagebox.showerror(
                 "Erreur", " Veuillez entrer un nombre entiers valides."
             )
             return
