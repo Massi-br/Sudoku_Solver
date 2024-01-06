@@ -77,10 +77,18 @@ def graphe_from_welsh():
 
         def add_vertex():
             global i
-            vertex = entry_vertex.get()
-            neighbors = entry_neighbors.get().split()
 
-            while vertex in neighbors:
+            vertex_str = entry_vertex.get()
+            neighbors_str = entry_neighbors.get().split()
+            try:
+                vertex = int(vertex_str)
+                neighbors = [int(neighbor) for neighbor in neighbors_str]
+            except ValueError:
+                messagebox.showerror(
+                    "Erreur", "Veuillez entrer des nombres entiers valides."
+                )
+
+            if vertex in neighbors:
                 messagebox.showerror(
                     "Erreur",
                     "Un sommet ne peut pas être son propre voisin. Veuillez ressaisir.",
@@ -89,10 +97,29 @@ def graphe_from_welsh():
                 entry_vertex.delete(0, tk.END)
                 entry_neighbors.delete(0, tk.END)
                 i -= 1
-
                 # Mettre à jour les valeurs avec les nouvelles saisies
-                vertex = entry_vertex.get()
-                neighbors = entry_neighbors.get().split()
+                vertex_str = entry_vertex.get()
+                neighbors_str = entry_neighbors.get().split()
+
+            if len(neighbors_str) >= vertex - 1:
+                messagebox.showerror(
+                    "Erreur",
+                    f"La liste des voisins doit être non vide et avoir une longueur inférieure à {vertex - 1}. Veuillez ressaisir.",
+                )
+                # Réinitialiser les champs d'entrée
+                entry_vertex.delete(0, tk.END)
+                entry_neighbors.delete(0, tk.END)
+                i -= 1
+                vertex_str = entry_vertex.get()
+                neighbors_str = entry_neighbors.get().split()
+
+            try:
+                vertex = int(vertex_str)
+                neighbors = [int(neighbor) for neighbor in neighbors_str]
+            except ValueError:
+                messagebox.showerror(
+                    "Erreur", "Veuillez entrer des nombres entiers valides."
+                )
 
             # Mise à jour du graphe
             if vertex not in monGraphe:
@@ -104,7 +131,17 @@ def graphe_from_welsh():
                     monGraphe[vertex].append(neighbor)
 
                 if neighbor not in monGraphe:
-                    monGraphe[neighbor] = []
+                    if len(monGraphe) == vertex:
+                        messagebox.showerror(
+                            "Erreur",
+                            f"il existe déja {vertex} sommets , veuillez resaisir s'il vous plait",
+                        )
+                        # Réinitialiser les champs d'entrée
+                        entry_vertex.delete(0, tk.END)
+                        entry_neighbors.delete(0, tk.END)
+                        i -= 1
+                    else:
+                        monGraphe[neighbor] = []
 
                 if vertex != neighbor and vertex not in monGraphe[neighbor]:
                     monGraphe[neighbor].append(vertex)

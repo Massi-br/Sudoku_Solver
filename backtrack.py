@@ -24,30 +24,20 @@ def getNextVertex(g, sol):
     return None
 
 
-# -----------------------------------FONCTION DE BASE (WELSH_POWELL)---------------------#
+# -----------------------------------FONCTION DE BASE (BACKTRACK)---------------------#
 def backtrack(graphe, vertex, colors, solution):
     if vertex is None:
         return True
-
-    # print(f"Coloration de sommet {vertex} avec les couleurs disponibles : {colors} \n")
     for col in colors:
         if isSafeToColor(graphe, vertex, col, solution):
             solution[vertex] = col
 
             next_vertex = getNextVertex(graphe, solution)
-            # print(
-            #     f"   Essai de couleur {col} pour le sommet {vertex}. Solution actuelle : {solution}\n"
-            # )
+
             if backtrack(graphe, next_vertex, colors, solution):
                 return True
 
-            solution[
-                vertex
-            ] = None  # Revenir en arrière (backtrack) en annulant la couleur
-    #         print(
-    #             f"   Retour en arrière. Annulation de la couleur pour le sommet {vertex}. Solution actuelle : {solution}\n"
-    #         )
-    # print(f"Aucune couleur n'est valide pour le sommet {vertex}.\n")
+            solution[vertex] = None
     return False
 
 
@@ -128,14 +118,14 @@ def graph_from_backtrack():
         s = entry_1.get()
         try:
             vertices = int(s)
-            # Appel de la fonction pour ajouter les sommets
+
             for _ in range(vertices):
                 open_vertex_window()
                 app.wait_window(vertex_window)
+
             # Affichage du graphe actuel
             print("Graphe actuel:", monGraphe)
 
-            # Appel de la fonction backtrack avec le graphe spécifié par l'utilisateur
             first_vertex = list(monGraphe.keys())[0] if monGraphe else None
             v_solution = {v: None for v in monGraphe}
             if first_vertex is not None:
