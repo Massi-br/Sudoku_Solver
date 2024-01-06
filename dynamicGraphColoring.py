@@ -55,7 +55,7 @@ def action_bouton_vertex_add(entry):
 def ajoutArc():
     edgeFrame = tk.Tk()
     edgeFrame.title("Ajout arc")
-    vertex_1 = tk.Label(edgeFrame, text="Entrer le première extrémité : ")
+    vertex_1 = tk.Label(edgeFrame, text="Entrer la première extrémité : ")
     vertex_2 = tk.Label(edgeFrame, text="Entrer la deuxième extrémité : ")
     vertex_entry_1 = tk.Entry(edgeFrame)
     vertex_entry_2 = tk.Entry(edgeFrame)
@@ -146,7 +146,7 @@ def action_bouton_vertex_supp(entry):
 def suppressionA():
     edgeFrame = tk.Tk()
     edgeFrame.title("Suppression arc")
-    vertex_1 = tk.Label(edgeFrame, text="Entrer le première extrémité : ")
+    vertex_1 = tk.Label(edgeFrame, text="Entrer la première extrémité : ")
     vertex_2 = tk.Label(edgeFrame, text="Entrer la deuxième extrémité : ")
     vertex_entry_1 = tk.Entry(edgeFrame)
     vertex_entry_2 = tk.Entry(edgeFrame)
