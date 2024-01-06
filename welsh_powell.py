@@ -66,92 +66,69 @@ def welsh_powell(graphe):
 
 # -------------------------------------------GUI---------------------------------------------#
 def graphe_from_welsh():
-    global monGraphe
+    global monGraphe, error_detected
 
     def open_vertex_window():
         global entry_vertex, entry_neighbors, vertex_window
 
         def add_vertex_and_close():
+            global error_detected
             add_vertex()
-            close_vertex_window()
+            # Supprimer la fenêtre pop-up seulement si aucune erreur n'est détectée
+            if not error_detected:
+                close_vertex_window()
 
         def add_vertex():
-            global i
+            global vertices, error_detected
 
             vertex_str = entry_vertex.get()
             neighbors_str = entry_neighbors.get().split()
-            try:
-                vertex = int(vertex_str)
-                neighbors = [int(neighbor) for neighbor in neighbors_str]
-            except ValueError:
-                messagebox.showerror(
-                    "Erreur", "Veuillez entrer des nombres entiers valides."
-                )
-
-            if vertex in neighbors:
-                messagebox.showerror(
-                    "Erreur",
-                    "Un sommet ne peut pas être son propre voisin. Veuillez ressaisir.",
-                )
-                # Réinitialiser les champs d'entrée
-                entry_vertex.delete(0, tk.END)
-                entry_neighbors.delete(0, tk.END)
-                i -= 1
-                # Mettre à jour les valeurs avec les nouvelles saisies
-                vertex_str = entry_vertex.get()
-                neighbors_str = entry_neighbors.get().split()
-
-            if len(neighbors_str) >= vertex - 1:
-                messagebox.showerror(
-                    "Erreur",
-                    f"La liste des voisins doit être non vide et avoir une longueur inférieure à {vertex - 1}. Veuillez ressaisir.",
-                )
-                # Réinitialiser les champs d'entrée
-                entry_vertex.delete(0, tk.END)
-                entry_neighbors.delete(0, tk.END)
-                i -= 1
-                vertex_str = entry_vertex.get()
-                neighbors_str = entry_neighbors.get().split()
 
             try:
                 vertex = int(vertex_str)
                 neighbors = [int(neighbor) for neighbor in neighbors_str]
-            except ValueError:
-                messagebox.showerror(
-                    "Erreur", "Veuillez entrer des nombres entiers valides."
-                )
 
-            # Mise à jour du graphe
-            if vertex not in monGraphe:
-                if vertex.isdigit():
+                if vertex in neighbors:
+                    raise ValueError("Un sommet ne peut pas être son propre voisin.")
+
+                if len(neighbors) > vertices - 1:
+                    raise ValueError(
+                        f"La liste des voisins doit avoir une longueur inférieure à {vertices}."
+                    )
+
+                # Mise à jour du graphe
+                if vertex not in monGraphe:
                     monGraphe[vertex] = []
 
-            for neighbor in neighbors:
-                if neighbor != vertex and neighbor not in monGraphe[vertex]:
-                    monGraphe[vertex].append(neighbor)
+                for neighbor in neighbors:
+                    if neighbor == vertex:
+                        raise ValueError(f"Erreur dans les voisins de {vertex}.")
 
-                if neighbor not in monGraphe:
-                    if len(monGraphe) == vertex:
-                        messagebox.showerror(
-                            "Erreur",
-                            f"il existe déja {vertex} sommets , veuillez resaisir s'il vous plait",
-                        )
-                        # Réinitialiser les champs d'entrée
-                        entry_vertex.delete(0, tk.END)
-                        entry_neighbors.delete(0, tk.END)
-                        i -= 1
-                    else:
+                    if neighbor not in monGraphe:
+                        if len(monGraphe) >= vertices:
+                            raise ValueError(
+                                f"Le graphe a déjà atteint le nombre maximal de sommets. Veuillez ressaisir les valeurs."
+                            )
+
                         monGraphe[neighbor] = []
 
-                if vertex != neighbor and vertex not in monGraphe[neighbor]:
-                    monGraphe[neighbor].append(vertex)
+                    if vertex not in monGraphe[neighbor]:
+                        monGraphe[neighbor].append(vertex)
+                    if neighbor not in monGraphe[vertex]:
+                        monGraphe[vertex].append(neighbor)
 
-            # Affichage du graphe actuel
-            print("Graphe actuel:", monGraphe)
+                # Affichage du graphe actuel
+                print("Graphe actuel:", monGraphe)
+                error_detected = False
 
-            # Réinitialiser les champs d'entrée
-            entry_vertex.delete(0, tk.END)
-            entry_neighbors.delete(0, tk.END)
+            except ValueError as e:
+                error_detected = True
+                messagebox.showerror("Erreur", str(e))
+
+            finally:
+                # Réinitialiser les champs d'entrée
+                entry_vertex.delete(0, tk.END)
+                entry_neighbors.delete(0, tk.END)
 
         # Créer une fenêtre pop-up
         vertex_window = tk.Toplevel(app)
@@ -180,8 +157,10 @@ def graphe_from_welsh():
         vertex_window.destroy()
 
     def action_button():
-        global monGraphe, i
+        global monGraphe, vertices
+
         s = entry_1.get()
+
         try:
             vertices = int(s)
             i = 0
@@ -191,7 +170,6 @@ def graphe_from_welsh():
                     vertex_window
                 )  # Attendre que la fenêtre pop-up soit fermée
                 i += 1
-
             sol = welsh_powell(monGraphe)
             draw_colored_graph(monGraphe, sol)
             monGraphe = {}
@@ -204,25 +182,41 @@ def graphe_from_welsh():
             return
 
     def reset_graph():
-        global monGraphe, i
+        global monGraphe
         monGraphe = {}
-        i = 0
 
+    def quit_app():
+        app.destroy()
+
+    error_detected = False
     app = tk.Tk()
-    app.title("Welsh_Powell Algorithm")
+    app.title("Welsh-Powell Algorithm")
     app.geometry("250x150")
-
     app.maxsize(400, 200)
-    app.minsize(400, 150)
-
-    validate_button = tk.Button(app, text="Valider", width="20", command=action_button)
-
+    app.minsize(350, 150)
+    validate_button = tk.Button(
+        app,
+        text="Valider",
+        width="20",
+        background="blue",
+        foreground="white",
+        command=action_button,
+    )
+    quit_button = tk.Button(
+        app,
+        text="Quitter",
+        width="20",
+        background="red",
+        foreground="white",
+        command=quit_app,
+    )
     label1 = tk.Label(app, text="Entrer le nombre de sommet: ")
     entry_1 = tk.Entry(app)
 
     label1.grid(row=0, column=0, sticky=tk.E, padx=10, pady=10, columnspan=2)
     entry_1.grid(row=0, column=2, padx=10, pady=10, columnspan=2)
+    validate_button.grid(row=2, column=0, padx=10, pady=10, columnspan=2)
+    quit_button.grid(row=2, column=2, padx=10, pady=10, columnspan=2)
 
-    validate_button.grid(row=2, column=1, padx=10, pady=10, columnspan=2)
     app.protocol("WM_DELETE_WINDOW", reset_graph)
     app.mainloop()

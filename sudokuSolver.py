@@ -1,6 +1,8 @@
+from tkinter import ttk
 import backtrack as bkt
 from display import draw_colored_graph
 import tkinter as tk
+from tkinter import messagebox
 
 
 # -----------------------------------------------------DECLARATION--------------------------------------------#
@@ -127,7 +129,7 @@ for i in range(9):
 # ------------------------------------DESSINER LE GRAPHE COLORË--------------------------------------------#
 
 if sol_init is None:
-    tk.messagebox.showerror(
+    messagebox.showerror(
         "Erreur", "Aucune solution trouvée. Le graphe ne peut pas être coloré."
     )
 else:
@@ -146,17 +148,17 @@ class SudokuGUI:
         self.create_grid()
 
     def create_grid(self):
-        frame_initial = tk.ttk.Frame(self.master)
+        frame_initial = ttk.Frame(self.master)
         frame_initial.grid(row=0, column=0, padx=5)
 
-        frame_color = tk.ttk.Frame(self.master)
+        frame_color = ttk.Frame(self.master)
         frame_color.grid(row=0, column=1, padx=5)
 
-        frame_solution = tk.ttk.Frame(self.master)
+        frame_solution = ttk.Frame(self.master)
         frame_solution.grid(row=0, column=2, padx=5)
 
         # Grille initiale
-        tk.ttk.Label(frame_initial, text="Sudoku Initial", font=("Arial", 16)).grid(
+        ttk.Label(frame_initial, text="Sudoku Initial", font=("Arial", 16)).grid(
             row=0, column=0, columnspan=9
         )
         canvas_initial = tk.Canvas(frame_initial, width=400, height=450)
@@ -164,7 +166,7 @@ class SudokuGUI:
         self.draw_grid(canvas_initial, self.sudoku_initial)
 
         # Grille de couleurs
-        tk.ttk.Label(frame_color, text="Grille de Couleurs", font=("Arial", 16)).grid(
+        ttk.Label(frame_color, text="Grille de Couleurs", font=("Arial", 16)).grid(
             row=0, column=0, columnspan=9
         )
         canvas_color = tk.Canvas(frame_color, width=400, height=450)
@@ -172,7 +174,7 @@ class SudokuGUI:
         self.draw_color_grid(canvas_color, self.color_grid)
 
         # Grille solution
-        tk.ttk.Label(frame_solution, text="Sudoku Solution", font=("Arial", 16)).grid(
+        ttk.Label(frame_solution, text="Sudoku Solution", font=("Arial", 16)).grid(
             row=0, column=0, columnspan=9
         )
         canvas_solution = tk.Canvas(frame_solution, width=400, height=450)

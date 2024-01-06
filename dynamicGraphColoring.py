@@ -29,6 +29,9 @@ def ajoutSommet():
 
 def action_bouton_vertex_add(entry):
     vertex_entry = entry.get()
+    if not vertex_entry:
+        messagebox.showerror("Erreur", "Veuillez entrer au moins un sommet.")
+        return
     try:
         vertex_list = list(map(int, vertex_entry.split()))
         for v in vertex_list:
@@ -83,9 +86,12 @@ def action_bouton_egde_add(entry1, entry2):
             couleur_sommets = welsh_powell(monGraphe)
             draw_colored_graph(monGraphe, couleur_sommets)
         else:
-            messagebox.showerror(
-                message=f"L'un ou les deux sommets n'existe pas dans le graphe"
+            messagebox.showwarning(
+                "Warning",
+                message=f"L'un ou les deux sommets n'existe pas dans le graphe",
             )
+            couleur_sommets = welsh_powell(monGraphe)
+            draw_colored_graph(monGraphe, couleur_sommets)
 
     except ValueError:
         messagebox.showerror("Erreur", " Veuillez entrer des nombres entiers valides.")
@@ -119,15 +125,17 @@ def action_bouton_vertex_supp(entry):
             for v in monGraphe:
                 monGraphe[v] = [voisin for voisin in monGraphe[v] if voisin != sommet]
             messagebox.showinfo(
-                message=f"le sommet '{sommet}' a été supprimé avec success"
+                "Info", message=f"le sommet '{sommet}' a été supprimé avec success"
             )
             update_buttons_state()
             couleur_sommets = welsh_powell(monGraphe)
             draw_colored_graph(monGraphe, couleur_sommets)
         else:
-            messagebox.showerror(
-                message=f"le sommet '{sommet}' n'existe pas dans le graphe"
+            messagebox.showwarning(
+                "Warning", message=f"le sommet '{sommet}' n'existe pas dans le graphe"
             )
+            couleur_sommets = welsh_powell(monGraphe)
+            draw_colored_graph(monGraphe, couleur_sommets)
 
     except ValueError:
         messagebox.showerror("Erreur", " Veuillez entrer des nombres entiers valides.")
@@ -170,13 +178,17 @@ def action_bouton_egde_supp(entry1, entry2):
                 couleur_sommets = welsh_powell(monGraphe)
                 draw_colored_graph(monGraphe, couleur_sommets)
             else:
-                messagebox.showerror(
-                    "Erreur", " L'arc entre ces deux sommets n'existe pas."
+                messagebox.showwarning(
+                    "Warning", " L'arc entre ces deux sommets n'existe pas."
                 )
+                couleur_sommets = welsh_powell(monGraphe)
+                draw_colored_graph(monGraphe, couleur_sommets)
         else:
-            messagebox.showerror(
-                "Erreur", " L'un ou les deux sommets n'existe pas dans le graphe."
+            messagebox.showwarning(
+                "Warning", " L'un ou les deux sommets n'existe pas dans le graphe."
             )
+            couleur_sommets = welsh_powell(monGraphe)
+            draw_colored_graph(monGraphe, couleur_sommets)
 
     except ValueError:
         messagebox.showerror("Erreur", " Veuillez entrer des nombres entiers valides.")
@@ -185,7 +197,7 @@ def action_bouton_egde_supp(entry1, entry2):
 
 # -------------------------------------------FENETRE PRINCIPALE---------------------------------------------------#
 app = tk.Tk()
-app.title("Graph Coloring Algorithm")
+app.title("Graph Coloring Apk")
 app.maxsize(400, 350)
 app.minsize(300, 300)
 largeur_ecran = app.winfo_screenwidth()
