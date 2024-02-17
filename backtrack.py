@@ -31,15 +31,11 @@ def backtrack(graphe, vertex, colors, solution):
     for col in colors:
         if isSafeToColor(graphe, vertex, col, solution):
             solution[vertex] = col
-
             next_vertex = getNextVertex(graphe, solution)
-
             if backtrack(graphe, next_vertex, colors, solution):
                 return True
-
             solution[vertex] = None
     return False
-
 
 # -----------------------------------------GUI-------------------------------------------#
 
